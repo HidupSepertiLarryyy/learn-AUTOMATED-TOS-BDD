@@ -1,25 +1,43 @@
 package hooks;
 
+// ✅ Import hook annotation Cucumber
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+
+// ✅ Apache Commons IO buat copy file screenshot
 import org.apache.commons.io.FileUtils;
+
+// ✅ Logger pakai Log4j2
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+
+// ✅ Selenium API buat screenshot
 import org.openqa.selenium.WebDriver;
+
+// ✅ Panggil driver singleton bikin 1 browser instance
 import drivers.DriverSingleton;
 
-import java.io.File;
-import java.io.IOException;
+// ✅ Panggil util baru ScreenshotUtil
+import utils.ScreenshotUtil;
 
 public class Hooks {
+
+    // ✅ Global webdriver yang bisa dipanggil step manapun
     public static WebDriver driver;
+
+    // ✅ Simpen skenario aktif (buat attach screenshot per step)
     public static Scenario scenario;
 
+    // ✅ Inisialisasi logger Log4j2, target class = Hooks
     private static final Logger logger = LogManager.getLogger(Hooks.class);
 
+    /**
+     * ✅ Method ini jalan sebelum scenario mulai.
+     * - Dapat Scenario dari Cucumber
+     * - Ambil driver dari singleton (Chrome, Edge, dll)
+     * - Log info.
+     */
     @Before
     public void setUp(Scenario sc) {
         driver = DriverSingleton.getDriver();
@@ -27,35 +45,23 @@ public class Hooks {
         logger.info("🔧 Browser started.");
     }
 
+    /**
+     * ✅ Method ini jalan sesudah scenario selesai.
+     * - Kalau fail ➜ attach screenshot "FAILED"
+     * - Kalau pass ➜ attach screenshot "PASSED"
+     * - Selalu quit driver di akhir.
+     */
     @After
     public void tearDown(Scenario sc) {
         if (sc.isFailed()) {
-            attachScreenshot(sc, "FAILED");
+            ScreenshotUtil.attachScreenshot(driver, sc, "FAILED");
         } else {
-            attachScreenshot(sc, "PASSED");
+            ScreenshotUtil.attachScreenshot(driver, sc, "PASSED");
         }
 
         if (driver != null) {
             driver.quit();
             logger.info("✅ Browser closed.");
-        }
-    }
-
-    private void attachScreenshot(Scenario sc, String status) {
-        try {
-            TakesScreenshot ts = (TakesScreenshot) driver;
-            byte[] bytes = ts.getScreenshotAs(OutputType.BYTES);
-
-            File src = ts.getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(src, new File("screenshots/"
-                    + sc.getName().replaceAll(" ", "_")
-                    + "_" + status + ".png"));
-
-            sc.attach(bytes, "image/png", "Screenshot_" + status);
-            logger.info("📸 Screenshot attached: " + status);
-
-        } catch (IOException e) {
-            logger.error("❌ Error when taking screenshot", e);
         }
     }
 }
