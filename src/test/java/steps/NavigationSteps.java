@@ -5,6 +5,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 
 import org.testng.Assert;
@@ -15,11 +17,12 @@ import java.io.IOException;
 public class NavigationSteps {
 
     WebDriver driver = Hooks.driver;
+    private static final Logger logger = LogManager.getLogger(NavigationSteps.class);
 
     @Given("User opens the application homepage")
     public void open_homepage() {
         driver.get("https://localhost:7279/");
-        System.out.println("✅ Opened Homepage");
+        logger.info("✅ Opened Homepage");
         takeStepScreenshot("Opened_Homepage");
     }
 
@@ -27,14 +30,14 @@ public class NavigationSteps {
     public void click_login() {
         WebElement loginBtn = driver.findElement(By.linkText("Login"));
         loginBtn.click();
-        System.out.println("✅ Clicked Login");
+        logger.info("✅ Clicked Login");
         takeStepScreenshot("After_Click_Login");
     }
 
     @Then("User should be redirected to login URL")
     public void verify_login_url() {
         String currentUrl = driver.getCurrentUrl();
-        System.out.println("🔗 Current URL: " + currentUrl);
+        logger.info("🔗 Current URL: " + currentUrl);
         Assert.assertTrue(currentUrl.toLowerCase().contains("/login"), "URL harus mengandung /login");
     }
 
@@ -44,13 +47,13 @@ public class NavigationSteps {
             File src = ts.getScreenshotAs(OutputType.FILE);
             String fileName = "screenshots/" + name + ".png";
             FileUtils.copyFile(src, new File(fileName));
-            System.out.println("📸 Step Screenshot saved: " + fileName);
+            logger.info("📸 Step Screenshot saved: " + fileName);
 
             byte[] bytes = ts.getScreenshotAs(OutputType.BYTES);
             Hooks.scenario.attach(bytes, "image/png", name);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("❌ Error saving step screenshot", e);
         }
     }
 }

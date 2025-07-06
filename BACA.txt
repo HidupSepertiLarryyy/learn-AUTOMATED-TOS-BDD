@@ -1,3 +1,123 @@
+📌 Apa itu BDD?
+BDD = Behavior Driven Development
+➡️ Metode pengembangan software yang fokus ke tingkah laku (behavior) dari sudut pandang user.
+➡️ Beda sama TDD (Test Driven Development) yang fokus ke unit test level kode.
+
+Tujuan BDD:
+
+Semua tim (developer, QA, BA, PM) ngerti apa yang aplikasi harus LAKUKAN, bukan cuma bagaimana cara ngodingnya.
+
+Spesifikasi sama tes ditulis pake bahasa Gherkin ➜ mirip bahasa manusia ➜ gampang dibaca & dites bareng.
+
+📌 Komponen Utama BDD
+1️⃣ Fitur / Feature
+Deskripsi besar apa yang mau dites ➜ use case
+Contoh: Feature: Login ke aplikasi TOS
+
+2️⃣ Scenario
+Detail skenario user flow ➜ step by step tingkah laku.
+Contoh:
+
+pgsql
+Copy
+Edit
+Scenario: 
+	User berhasil login
+  	Given User buka halaman login
+ 	When User input username dan password valid
+ 	And User klik tombol login
+  	Then User masuk ke dashboard
+3️⃣ Step Definitions
+Di Java ➜ codingan yang menghubungkan teks Gherkin ke aksi Selenium/WebDriver.
+Given, When, Then ➜ ngarah ke method di Java.
+
+📌 Alur Kerja BDD
+1️⃣ Tulis Fitur (Feature)
+Biasanya di file .feature ➜ Ditulis BA / QA bareng dev.
+
+2️⃣ Tulis Step Definitions
+Coding @Given, @When, @Then ➜ Sambungkan ke automation code.
+
+3️⃣ Jalanin Tes
+Cucumber ➜ jalankan feature ➜ cocokkan step ➜ jalankan Selenium ➜ validasi hasil.
+
+📌 Contoh Kasus Nyata
+bikin:
+✅ Navigation.feature ➜ skenario User opens homepage ➜ click Login ➜ redirect ke /login.
+✅ NavigationSteps.java ➜ step driver.get() ➜ findElement().click() ➜ Assert URL.
+
+📌 Kenapa BDD Dipake?
+✅ Bahasa manusia ➜ Semua stakeholder paham.
+✅ Dokumentasi otomatis ➜ Feature file = spesifikasi hidup.
+✅ Regression friendly ➜ Jalankan lagi kapanpun.
+✅ Kolaborasi QA + Dev ➜ Gak bikin tes sendirian.
+
+📌 Tools BDD Populer
+🥒 Cucumber ➜ paling banyak dipake.
+🍋 SpecFlow ➜ Cucumber versi .NET.
+🍰 Behave ➜ Python.
+🕷️ Selenium ➜ eksekusi UI.
+📊 Allure, Extent Report ➜ bikin hasil tes cantik.
+
+⚡ Kesimpulan Gampang
+➡️ BDD = Tes + Spesifikasi ➜ Bahasa manusia ➜ Dijalankan otomatis ➜ Stakeholder paham ➜ Bug berkurang.
+➡️ Tes = Bukti fitur bekerja sesuai perilaku user.
+
+
+🚦 BDD FLOW
+1️⃣ Buat Feature File
+
+Format: .feature
+
+Isi: Scenario ditulis pakai Gherkin Language (Given, When, Then).
+Contoh:
+
+pgsql
+Copy
+Edit
+Feature: Login Functionality
+  Scenario: User logs in with valid credentials
+    Given User is on the login page
+    When User enters valid username and password
+    Then User should be redirected to the dashboard
+2️⃣ Buat Step Definitions
+
+File Java/Python/JS, sesuai bahasanya.
+
+Di sinilah step Gherkin di-map ke automation code.
+Contoh:
+
+java
+Copy
+Edit
+@Given("User is on the login page")
+public void user_is_on_login_page() { ... }
+
+@When("User enters valid username and password")
+public void enter_credentials() { ... }
+
+@Then("User should be redirected to the dashboard")
+public void verify_dashboard() { ... }
+3️⃣ Tulis Kode Otomasi
+
+Gunakan Selenium / API tools / Mobile tools di dalam Step Definitions.
+
+Di sinilah driver.get(), click(), sendKeys(), assertion, dll.
+
+4️⃣ Jalankan Tes dengan Cucumber Runner
+
+Tool: mvn test (Java), pytest-bdd (Python), dsb.
+
+Framework BDD: Cucumber, Behave, SpecFlow, dsb.
+
+5️⃣ Hasilkan Laporan
+
+Gunakan plugin: ExtentReports, Allure, Cucumber HTML, dll.
+
+Screenshot attach di hooks & steps: PASSED / FAILED.
+
+
+ C:\Users\User\IdeaProjects\AUTOMATED-TOS-BDD
 Kalo udah di run buat buka report buka cmd trus jalankan
 allure generate allure-results --clean -o allure-report
 allure open allure-report

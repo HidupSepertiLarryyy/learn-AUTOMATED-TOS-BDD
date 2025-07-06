@@ -4,6 +4,8 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -14,13 +16,15 @@ import java.io.IOException;
 
 public class Hooks {
     public static WebDriver driver;
-    public static Scenario scenario; // ✅ SIMPEN GLOBAL
+    public static Scenario scenario;
+
+    private static final Logger logger = LogManager.getLogger(Hooks.class);
 
     @Before
     public void setUp(Scenario sc) {
         driver = DriverSingleton.getDriver();
-        scenario = sc; // ✅ SIMPEN Scenario
-        System.out.println("🔧 Browser started.");
+        scenario = sc;
+        logger.info("🔧 Browser started.");
     }
 
     @After
@@ -33,7 +37,7 @@ public class Hooks {
 
         if (driver != null) {
             driver.quit();
-            System.out.println("✅ Browser closed.");
+            logger.info("✅ Browser closed.");
         }
     }
 
@@ -48,9 +52,10 @@ public class Hooks {
                     + "_" + status + ".png"));
 
             sc.attach(bytes, "image/png", "Screenshot_" + status);
+            logger.info("📸 Screenshot attached: " + status);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("❌ Error when taking screenshot", e);
         }
     }
 }
