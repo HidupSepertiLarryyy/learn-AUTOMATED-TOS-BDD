@@ -1,0 +1,3 @@
+Kalo udah di run buat buka report buka cmd trus jalankan
+allure generate allure-results --clean -o allure-report
+allure open allure-report
