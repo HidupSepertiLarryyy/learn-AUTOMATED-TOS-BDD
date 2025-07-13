@@ -1,43 +1,29 @@
 package steps;
 
-// ✅ Import Hooks ➜ Buat akses driver & scenario global
 import hooks.Hooks;
-
-// ✅ Cucumber annotation ➜ Mapping step ke Gherkin
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-// ✅ Log4j2 logger
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-// ✅ Selenium API
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import pages.LoginPage;
 import utils.ConfigReader;
-
-// ✅ Assertion TestNG
+import utils.ScreenshotUtil;
 import org.testng.Assert;
 
-// ✅ ScreenshotUtil biar ga duplicate code
-import utils.ScreenshotUtil;
+import java.time.Duration;
 
-public class NavigationSteps {
+public class LoginSteps {
 
-    // ✅ Pakai driver global dari Hooks
     WebDriver driver = Hooks.driver;
+    private static final Logger logger = LogManager.getLogger(LoginSteps.class);
 
-    // ✅ Logger khusus NavigationSteps class
-    private static final Logger logger = LogManager.getLogger(NavigationSteps.class);
+    // ✅ Taruh di SINI! Bukan di tengah step
+    LoginPage loginPage = new LoginPage(driver);
 
-    /**
-     * ✅ Step: User buka homepage
-     * - Buka URL
-     * - Log info
-     * - Screenshot step ➜ via ScreenshotUtil
-     */
     @Given("User opens the application homepage")
     public void open_homepage() {
         String url = ConfigReader.getProperty("base.url");
@@ -46,13 +32,6 @@ public class NavigationSteps {
         ScreenshotUtil.attachStepScreenshot(driver, Hooks.scenario, "Opened_Homepage");
     }
 
-    /**
-     * ✅ Step: User klik tombol Login
-     * - Temukan element
-     * - Klik
-     * - Log info
-     * - Screenshot step ➜ via ScreenshotUtil
-     */
     @When("User clicks the Login button")
     public void click_login() {
         WebElement loginBtn = driver.findElement(By.linkText("Login"));
@@ -61,12 +40,6 @@ public class NavigationSteps {
         ScreenshotUtil.attachStepScreenshot(driver, Hooks.scenario, "After_Click_Login");
     }
 
-    /**
-     * ✅ Step: Verifikasi URL berisi /login
-     * - Ambil current URL
-     * - Logging
-     * - Assert
-     */
     @Then("User should be redirected to login URL")
     public void verify_login_url() {
         String currentUrl = driver.getCurrentUrl();
@@ -74,4 +47,27 @@ public class NavigationSteps {
         Assert.assertTrue(currentUrl.toLowerCase().contains("/login"), "URL harus mengandung /login");
     }
 
+    @Given("User is on the login page")
+    public void user_is_on_the_login_page() {
+        loginPage.openLoginPage();
+    }
+
+    @When("User enters valid username and password")
+    public void user_enters_valid_username_and_password() {
+        loginPage.enterUsername("a@a.com");
+        ScreenshotUtil.attachStepScreenshot(driver, Hooks.scenario, "After_username");
+        loginPage.enterPassword("123");
+        ScreenshotUtil.attachStepScreenshot(driver, Hooks.scenario, "After_password");
+    }
+
+    @When("User clicks the login button")
+    public void user_clicks_the_login_button() {
+        loginPage.clickLogin();
+        //ScreenshotUtil.attachStepScreenshot(driver, Hooks.scenario, "After_click_loginBtn");
+    }
+
+    @Then("User should see the admin page")
+    public void user_should_see_the_admin_page() {
+        loginPage.verifyAdminPageVisible();
+    }
 }
